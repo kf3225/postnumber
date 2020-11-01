@@ -1,0 +1,68 @@
+version: "3"
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: ./build/Dockerfile
+    container_name: app
+    volumes:
+      - ./app/cmd/postnum:/go/src/app/cmd/postnum
+    ports:
+      - 8080:8080
+    networks:
+      app_network:
+        ipv4_address: 172.30.0.5
+    depends_on:
+      - nginx
+      - postgresql
+
+  postgresql:
+    build:
+      context: ./postgresql
+      dockerfile: ./build/Dockerfile
+    hostname: postgres
+    volumes:
+      - ./postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 5432:5432
+    networks:
+      app_network:
+        ipv4_address: 172.30.0.6
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    restart: always
+    user: root
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: ./build/Dockerfile
+    ports:
+      - 80:80
+    networks:
+      app_network:
+        ipv4_address: 172.30.0.7
+
+  pgadmin:
+    image: dpage/pgadmin4:4
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+    ports:
+      - 8081:80
+      - 443:443
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@github.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    networks:
+      app_network:
+        ipv4_address: 172.30.0.8
+
+networks:
+  app_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.0.0/24
