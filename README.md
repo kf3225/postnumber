@@ -37,8 +37,10 @@ docker-compose.yml
 - networksを使用してサブネットやコンテナがどのネットワークに属すのかを記述可能でlinksよりも積極的に使用したい
 
 <br />
+
 Dockerfile(Golangのホットリロード)
 ==
+
 ```
 FROM golang:1.15.3-alpine3.12
 
@@ -49,7 +51,6 @@ RUN apk update && apk add git
 RUN go get -d -v github.com/lib/pq
 RUN go get -v github.com/cespare/reflex
 CMD reflex -r '(\.go$|go\.mod)' -s go run cmd/sampleapp/main.go
-
 ```
 
 - reflexを使用するものとする
@@ -60,6 +61,7 @@ CMD reflex -r '(\.go$|go\.mod)' -s go run cmd/sampleapp/main.go
 
 Dockerfile(nginx)
 ==
+
 ```
 FROM nginx:1.19-alpine
 
@@ -72,8 +74,11 @@ CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
 - default.confを/etc/nginx/conf.d配下に配置できるようにWORKDIRに設定
 - daemon off→Dockerコンテナはコマンドがフォアグラウンドで実行されないとexitしてコンテナが落ちてしまうのでdaemon offにすることによってnginxをバックグラウンド実行させなければならない
 
+<br />
+
 default.conf
 ==
+
 ```
 upstream goapp {
   server 172.30.0.5:8080;
