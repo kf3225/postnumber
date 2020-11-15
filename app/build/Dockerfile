@@ -6,4 +6,4 @@ COPY ./cmd ./cmd
 RUN apk update && apk add git
 RUN go get -d -v github.com/lib/pq
 RUN go get -v github.com/cespare/reflex
-CMD reflex -r '(\.go$|go\.mod)' -s go run cmd/postnum/main.go
+CMD reflex -r '(\.go$|go\.mod)' -s go run cmd/sampleapp/main.go
